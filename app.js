@@ -9,12 +9,32 @@ const seedData = [
     {id:"c6",category:"PLANOS DE FRAN",name:"Primer plano de los ojos",type:"Primer plano",subject:"Fran",description:"Fran observa el espacio o mira hacia el exterior.",location:"Abertura / interior",duration:"3–5 segundos",notes:"Gestualidad mínima, sin posar."},
     {id:"c7",category:"PLANOS DE FRAN",name:"Fran mirando hacia afuera",type:"Plano general",subject:"Fran / exterior",description:"Fran o Cuqui parado dentro de la obra mirando hacia afuera.",location:"Interior de obra",duration:"8–12 segundos",notes:"Dejar aire en el encuadre y sostener la mirada."},
     {id:"c8",category:"PLANOS DE FRAN",name:"La cámara se aleja",type:"Travelling",subject:"Protagonista / arquitectura",description:"La cámara se aleja lentamente y revela la escala del ambiente.",location:"Interior de obra",duration:"8–12 segundos",notes:"Movimiento parejo, sin aceleraciones bruscas."},
-    {id:"c9",category:"PLANOS DE SAAVEDRA",name:"Saavedra: vida de barrio",type:"Plano general",subject:"Calles / árboles / plaza / tren",description:"Calles, árboles, plaza, gente caminando, cielo abierto y tren pasando.",location:"Entorno de ARIA",duration:"5–8 segundos",notes:"Renders solo como anticipación breve."}
+    {id:"c9",category:"PLANOS DE SAAVEDRA",name:"Saavedra: vida de barrio",type:"Plano general",subject:"Calles / árboles / plaza / tren",description:"Calles, árboles, plaza, gente caminando, cielo abierto y tren pasando.",location:"Entorno de ARIA",duration:"5–8 segundos",notes:"Renders solo como anticipación breve."},
+    {id:"c10",category:"PLANOS DE OBREROS",name:"Obrero trabajando en plano medio",type:"Plano medio",subject:"Obrero",description:"Mostrar al trabajador concentrado en una tarea real.",location:"Sector de trabajo",duration:"5–8 segundos",notes:"Registrar una toma abierta y otra más cerrada."},
+    {id:"c11",category:"PLANOS DE OBREROS",name:"Herramientas en uso",type:"Plano detalle",subject:"Herramientas",description:"Martillo, destornillador, taladro y herramientas disponibles en acción.",location:"Sector de trabajo",duration:"3–5 segundos",notes:"Solo acciones reales y seguras."},
+    {id:"c12",category:"PLANOS DE OBREROS",name:"Manos sobre el material",type:"Plano detalle",subject:"Manos / material",description:"Manos tocando, acomodando o trabajando el hormigón y otros materiales.",location:"Interior de obra",duration:"3–5 segundos",notes:"Buscar texturas y movimientos naturales."},
+    {id:"c13",category:"PLANOS DE OBREROS",name:"Obrero en contexto de la estructura",type:"Plano general",subject:"Obrero",description:"Trabajador en medio de la estructura para mostrar escala y actividad.",location:"Interior de obra",duration:"5–8 segundos",notes:"Componer con líneas de la arquitectura."},
+    {id:"c14",category:"PLANOS DE LA OBRA SOLA",name:"Hormigón y texturas",type:"Plano detalle",subject:"Hormigón",description:"Superficies, marcas, bordes y texturas del hormigón.",location:"Interior de obra",duration:"3–5 segundos",notes:"Variar ángulos y profundidad de campo."},
+    {id:"c15",category:"PLANOS DE LA OBRA SOLA",name:"Hierros y armaduras",type:"Plano detalle",subject:"Hierros / estructura",description:"Hierros, varillas y armaduras de la construcción.",location:"Interior de obra",duration:"3–5 segundos",notes:"Buscar líneas gráficas y repetición."},
+    {id:"c16",category:"PLANOS DE LA OBRA SOLA",name:"Polvo en contraluz",type:"Plano detalle",subject:"Polvo / luz",description:"Polvo suspendido iluminado por la luz natural.",location:"Interior de obra",duration:"3–5 segundos",notes:"Filmar a contraluz si las condiciones lo permiten."},
+    {id:"c17",category:"PLANOS DE LA OBRA SOLA",name:"Reflejo del sol sobre una pared",type:"Plano detalle",subject:"Luz / pared",description:"Reflejo de sol y sombras moviéndose sobre la pared.",location:"Interior de obra",duration:"3–5 segundos",notes:"Toma fija, dejar respirar la imagen."},
+    {id:"c18",category:"PLANOS DE LA OBRA SOLA",name:"Planta moviéndose con el viento",type:"Plano detalle",subject:"Planta",description:"Una planta o follaje moviéndose suavemente con el viento.",location:"Exterior / entorno",duration:"3–5 segundos",notes:"Movimiento orgánico, fondo limpio."},
+    {id:"c19",category:"PLANOS DE LA OBRA SOLA",name:"Aberturas y líneas de la estructura",type:"Plano general",subject:"Arquitectura",description:"Encuadres limpios de columnas, aberturas y estructura sin personas.",location:"Interior de obra",duration:"5–8 segundos",notes:"Buscar simetrías y profundidad."},
+    {id:"c20",category:"PLANOS DE FRAN",name:"Fran llega al acceso",type:"Plano medio",subject:"Fran",description:"Fran llega al acceso de ARIA y entra en la obra.",location:"Acceso",duration:"5–8 segundos",notes:"Registrar entrada completa y detalle de pasos."},
+    {id:"c21",category:"PLANOS DE FRAN",name:"Fran observa la obra",type:"Plano medio",subject:"Fran",description:"Fran se detiene y observa el espacio en silencio.",location:"Interior de obra",duration:"5–8 segundos",notes:"Gestualidad natural, sin mirar a cámara."},
+    {id:"c22",category:"PLANOS DE FRAN",name:"Fran entre columnas y hormigón",type:"Plano general",subject:"Fran",description:"Fran atraviesa el espacio rodeado por columnas y hormigón.",location:"Interior de obra",duration:"8–12 segundos",notes:"Dejar que el espacio domine el cuadro."},
+    {id:"c23",category:"PLANOS DE FRAN",name:"Mano de Fran sobre la baranda",type:"Plano detalle",subject:"Fran / baranda",description:"La mano descansa y se desliza suavemente sobre una baranda o superficie disponible.",location:"Interior de obra",duration:"3–5 segundos",notes:"Priorizar una superficie segura."},
+    {id:"c24",category:"PLANOS DE FRAN",name:"Fran mira hacia el exterior desde la obra",type:"Plano general",subject:"Fran / exterior",description:"Fran de espaldas o de perfil mira hacia afuera desde una abertura.",location:"Interior de obra",duration:"8–12 segundos",notes:"Dejar aire y sostener el plano."},
+    {id:"c25",category:"PLANOS DE SAAVEDRA",name:"Tren pasando",type:"Plano general",subject:"Tren",description:"Registrar el tren en movimiento como parte del ritmo del barrio.",location:"Saavedra",duration:"5–8 segundos",notes:"Capturar ambiente y movimiento."},
+    {id:"c26",category:"PLANOS DE SAAVEDRA",name:"Árboles y cielo abierto",type:"Plano general",subject:"Árboles / cielo",description:"Copas de árboles, hojas y cielo abierto.",location:"Saavedra",duration:"5–8 segundos",notes:"Buscar luz y movimiento del viento."},
+    {id:"c27",category:"PLANOS DE SAAVEDRA",name:"Personas caminando",type:"Plano general",subject:"Gente",description:"Personas caminando por las calles del barrio.",location:"Saavedra",duration:"5–8 segundos",notes:"Capturar momentos naturales sin invadir."},
+    {id:"c28",category:"PLANOS DE SAAVEDRA",name:"Plaza y espacios verdes",type:"Plano general",subject:"Plaza",description:"Planos de la plaza y sus espacios verdes.",location:"Saavedra",duration:"5–8 segundos",notes:"Mezclar plano general y detalles."},
+    {id:"c29",category:"PLANOS DE SAAVEDRA",name:"Calles y movimiento del barrio",type:"Plano general",subject:"Calles / barrio",description:"Calles, veredas y movimiento cotidiano de Saavedra.",location:"Saavedra",duration:"5–8 segundos",notes:"Registrar variedad de encuadres."}
   ]},
-  {id:"reel1",name:"REEL 1",subtitle:"REEL",description:"Agregá acá el concepto, hook y desglose de planos de este reel.",plans:[]},
-  {id:"reel2",name:"REEL 2",subtitle:"REEL",description:"Agregá acá el concepto, hook y desglose de planos de este reel.",plans:[]},
-  {id:"reel3",name:"REEL 3",subtitle:"REEL",description:"Agregá acá el concepto, hook y desglose de planos de este reel.",plans:[]},
-  {id:"reel4",name:"REEL 4",subtitle:"REEL",description:"Agregá acá el concepto, hook y desglose de planos de este reel.",plans:[]}
+  {id:"reel1",name:"REEL 1",subtitle:"REEL",description:"Hooks, desarrollo y cierres para testear.",plans:[],checklist:[{"id":"reel1-item1","label":"HOOK 1","text":"Con un anticipo del 30% podés ingresar a un proyecto en una de las mejores zonas de Buenos Aires.","done":false},{"id":"reel1-item2","label":"HOOK 2","text":"¿Estás buscando una oportunidad en Saavedra? Acompañame a recorrer este nuevo desarrollo.","done":false},{"id":"reel1-item3","label":"DESARROLLO 1","text":"ARIA es un proyecto en Saavedra, con unidades de 1 y 2 ambientes, espacios exteriores, amenities y una propuesta pensada para vivir, invertir y disfrutar. Un proyecto que ya completó su estructura y avanza hacia las próximas etapas de construcción. Con entrega en 2027.","done":false},{"id":"reel1-item4","label":"CIERRE 2","text":"¿Te interesa esta oportunidad? Consultanos por las unidades disponibles.","done":false},{"id":"reel1-item5","label":"CIERRE 3","text":"Ingresá en la mejor etapa del proyecto. Escribinos y recibí toda la información.","done":false},{"id":"reel1-item6","label":"HOOK 3","text":"¿Querés saber por qué esta es la mejor etapa para ingresar a un desarrollo?","done":false},{"id":"reel1-item7","label":"DESARROLLO 2 (HOOK 3)","text":"Porque todavía llegás a un precio de obra, bastante lejos de lo que va a valer terminado, pero ya podés ver que el proyecto es real y que la obra avanza. Llegás temprano, pero con la seguridad de que ARIA ya está tomando forma.","done":false}]},
+  {id:"reel2",name:"REEL 2",subtitle:"REEL",description:"Hooks, desarrollo y cierres para testear.",plans:[],checklist:[{"id":"reel2-item1","label":"HOOK 1","text":"Arranca directo con el desarrollo.","done":false},{"id":"reel2-item2","label":"HOOK 2","text":"Si estás buscando dónde vivir en Buenos Aires, mirá esto.","done":false},{"id":"reel2-item3","label":"HOOK 3","text":"Esta va a ser tu vista todos los días.","done":false},{"id":"reel2-item4","label":"DESARROLLO","text":"Saavedra es calma, conectividad, verde, espacios para salir a caminar y todo lo que necesitás en tu día a día. En ese contexto, se implanta ARIA. Un proyecto de 1 y 2 ambientes, apto profesional, con amenities y unidades con grandes terrazas. Un lugar para vivir la ciudad, pero a tu manera. Contamos con financiación hasta la entrega del proyecto. Entrá desde 80.300 USD.","done":false},{"id":"reel2-item5","label":"CIERRE 1","text":"Esto es Saavedra. Esto es ARIA. Escribinos y conocé el proyecto.","done":false},{"id":"reel2-item6","label":"CIERRE 2","text":"¿Te mudarías a Saavedra? Escribinos y te contamos todo sobre ARIA.","done":false},{"id":"reel2-item7","label":"CIERRE 3","text":"Si querés vivir o invertir en una de las mejores zonas de Buenos Aires, consultá las unidades disponibles.","done":false}]},
+  {id:"reel3",name:"REEL 3",subtitle:"REEL",description:"Hooks, desarrollo y cierres para testear.",plans:[],checklist:[{"id":"reel3-item1","label":"HOOK 1","text":"No especificado en el documento.","done":false},{"id":"reel3-item2","label":"HOOK 2","text":"¿Qué pasa cuando comprás un departamento mientras todavía está en construcción?","done":false},{"id":"reel3-item3","label":"HOOK 3","text":"Ya sé que viste muchos desarrollos, pero esta es una oportunidad que no te vas a querer perder.","done":false},{"id":"reel3-item4","label":"DESARROLLO","text":"Departamentos de 1 y 2 ambientes, grandes terrazas, amenities y una ubicación en Saavedra que tiene cada vez más movimiento. ¿Lo mejor? Podés comprar desde ahora, con anticipo + cuotas, y la entrega está prevista para 2027. No te cuelgues, que ya quedan pocas unidades.","done":false},{"id":"reel3-item5","label":"CIERRE 1","text":"Escribinos para más información.","done":false},{"id":"reel3-item6","label":"CIERRE 2","text":"ARIA, en Saavedra. Con entrega 2027. Escribinos y te contamos más.","done":false},{"id":"reel3-item7","label":"CIERRE 3","text":"¿Querés conocer las unidades disponibles? Escribinos.","done":false}]},
+  {id:"reel4",name:"REEL 4",subtitle:"REEL",description:"Video POV desde la cámara; Aldu agrega los textos en edición.",plans:[],checklist:[{"id":"reel4-item1","label":"HOOK 1","text":"POV: me dejaron entrar a ARIA antes que esté terminado.","done":false},{"id":"reel4-item2","label":"HOOK 2","text":"POV: vine a ver qué están construyendo acá.","done":false},{"id":"reel4-item3","label":"HOOK 3","text":"POV: así se ve ARIA antes de ser ARIA.","done":false},{"id":"reel4-item4","label":"TEXTO / DESARROLLO","text":"Así se ve un departamento antes de convertirse en tu casa.","done":false}]}
 ];
 let data = loadData();
 let activeVideoId = data[0]?.id;
@@ -24,7 +44,27 @@ const $ = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function clone(value){ return JSON.parse(JSON.stringify(value)); }
 function loadData(){
-  try { const saved = localStorage.getItem(STORAGE_KEY); if(saved){const parsed=JSON.parse(saved); if(Array.isArray(parsed)&&parsed.length)return parsed;} } catch(e){}
+  try {
+    const saved=localStorage.getItem(STORAGE_KEY);
+    if(saved){
+      const parsed=JSON.parse(saved);
+      if(Array.isArray(parsed)&&parsed.length){
+        return parsed.map(v=>{
+          const defaults=seedData.find(s=>s.id===v.id);
+          if(!defaults)return v;
+          const known=new Set((v.plans||[]).map(p=>p.id));
+          v.plans=v.plans||[];
+          (defaults.plans||[]).forEach(p=>{if(!known.has(p.id))v.plans.push(clone(p));});
+          if(defaults.checklist){
+            const existing=v.checklist||[];
+            const ids=new Set(existing.map(x=>x.id));
+            v.checklist=[...existing,...defaults.checklist.filter(x=>!ids.has(x.id)).map(clone)];
+          }
+          return v;
+        });
+      }
+    }
+  } catch(e){}
   return clone(seedData);
 }
 function saveData(message="Cambios guardados en este dispositivo"){
@@ -64,6 +104,7 @@ function renderProgress(){
 function renderContent(){
   const v=activeVideo(); if(!v)return;
   const allVideoPlans=v.plans||[];
+  const checklist=v.checklist||[];
   const isCine=v.id==="cine";
   const categories=["PLANOS DE OBREROS","PLANOS DE LA OBRA SOLA","PLANOS DE FRAN","PLANOS DE SAAVEDRA"];
   const plans=isCine?allVideoPlans.filter(p=>(p.category||inferCategory(p))===activeCineCategory):allVideoPlans;
@@ -76,6 +117,7 @@ function renderContent(){
       <div class="video-meta"><span class="meta-chip">${plans.length} planos</span><span class="meta-chip">${plans.filter(p=>p.done).length} grabados</span><span class="meta-chip">${plans.length&&plans.every(p=>p.done)?"Completo":"En producción"}</span></div>
     </div>
     ${isCine?`<div class="subtabs" role="tablist" aria-label="Categorías de planos">${categories.map((c,i)=>`<button class="subtab ${c===activeCineCategory?"active":""}" role="tab" aria-selected="${c===activeCineCategory}" data-category="${esc(c)}"><span>${String(i+1).padStart(2,"0")}</span>${esc(c)}<small>${allVideoPlans.filter(p=>(p.category||inferCategory(p))===c).length} planos</small></button>`).join("")}</div>`:""}
+    ${!isCine&&checklist.length?`<section class="checklist-section"><div class="checklist-heading"><h3>Guion y versiones para testear</h3><span>${checklist.filter(x=>x.done).length}/${checklist.length} completados</span></div><div class="content-checklist">${checklist.map(item=>`<label class="content-item ${item.done?"checked":""}"><input type="checkbox" data-check-item="${esc(item.id)}" ${item.done?"checked":""}><span class="content-item-copy"><strong>${esc(item.label)}</strong><span>${esc(item.text)}</span></span></label>`).join("")}</div></section>`:""}
     <div class="shot-toolbar"><h3>${isCine?esc(activeCineCategory):"Desglose de planos"}</h3><span>Marcá ✓ cuando esté grabado</span></div>
     <div class="shot-list">${plans.length?plans.map((p,i)=>shotCard(p,i)).join(""):`<div class="empty-state"><strong>Todavía no hay planos</strong><p>Agregá el primer plano para empezar a organizar este video.</p></div>`}</div>
     <div class="bottom-add"><button id="add-plan" class="add-wide">＋ Agregar un plano</button></div>
@@ -83,6 +125,7 @@ function renderContent(){
   $("edit-video").addEventListener("click",()=>openVideoDialog(v));
   $("delete-video").addEventListener("click",()=>deleteVideo(v.id));
   $("add-plan").addEventListener("click",()=>openPlanDialog());
+  document.querySelectorAll("[data-check-item]").forEach(input=>input.addEventListener("change",()=>{const item=(activeVideo().checklist||[]).find(x=>x.id===input.dataset.checkItem);if(item){item.done=input.checked;saveData();}}));
   document.querySelectorAll("[data-category]").forEach(b=>b.addEventListener("click",()=>{activeCineCategory=b.dataset.category;render();}));
   document.querySelectorAll("[data-done]").forEach(b=>b.addEventListener("click",()=>toggleDone(b.dataset.done)));
   document.querySelectorAll("[data-edit-plan]").forEach(b=>b.addEventListener("click",()=>openPlanDialog(findPlan(b.dataset.editPlan))));
