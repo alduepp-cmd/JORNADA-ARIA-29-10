@@ -39,6 +39,7 @@ const seedData = [
 let data = loadData();
 let activeVideoId = data[0]?.id;
 let activeCineCategory = "PLANOS DE OBREROS";
+let activePage = "videos";
 let toastTimer;
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -80,19 +81,55 @@ function allPlans(){ return data.flatMap(v=>v.plans||[]); }
 function render(){
   if(!data.length){data=clone(seedData);activeVideoId=data[0].id;}
   if(!data.some(v=>v.id===activeVideoId)) activeVideoId=data[0].id;
-  renderNav(); renderContent(); renderProgress();
+  renderNav(); if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else renderContent(); renderProgress();
 }
+function getPendingItems(){
+  const items=[];
+  data.forEach(v=>{
+    (v.plans||[]).forEach(p=>{if(!p.done)items.push({kind:"plan",id:p.id,video:v.name,label:p.name,detail:p.category||p.type||"Plano"});});
+    (v.checklist||[]).forEach(c=>{if(!c.done)items.push({kind:"check",id:c.id,video:v.name,label:c.label,detail:c.text});});
+  });
+  return items;
+}
+function getPendingCount(){return getPendingItems().length;}
+function renderPendingPage(){
+  const items=getPendingItems();
+  let content="<div class=\"video-header\"><div class=\"video-kicker\">CONTROL DE PRODUCCIÓN</div><h2>Lo que falta clickear</h2><p class=\"video-desc\">Todo lo que todavía está pendiente: planos por grabar y elementos de los reels por completar.</p><div class=\"video-meta\"><span class=\"meta-chip\">"+items.length+" pendientes</span></div></div>";
+  if(items.length){content+="<div class=\"pending-list\">"+items.map(item=>"<label class=\"pending-item\"><input type=\"checkbox\" data-pending-kind=\""+item.kind+"\" data-pending-id=\""+esc(item.id)+"\"><span class=\"pending-copy\"><strong>"+esc(item.label)+"</strong><small>"+esc(item.video)+" · "+esc(item.detail)+"</small></span></label>").join("")+"</div>";}
+  else {content+="<div class=\"empty-state\"><strong>¡Todo listo!</strong><p>No quedan elementos pendientes por marcar.</p></div>";}
+  content+="<p class=\"footer-note\">Los cambios se guardan automáticamente en este navegador.</p>";
+  $("video-content").innerHTML=content;
+  document.querySelectorAll("[data-pending-kind]").forEach(input=>input.addEventListener("change",()=>{
+    const id=input.dataset.pendingId;
+    if(input.dataset.pendingKind==="plan"){const p=findPlan(id);if(p)p.done=input.checked;}
+    else {data.forEach(v=>(v.checklist||[]).forEach(c=>{if(c.id===id)c.done=input.checked;}));}
+    saveData();
+  }));
+}
+function renderSchedulePage(){
+  const slots=[
+    {time:"13:00",title:"Arranque · VIDEO 1 — CINE",desc:"Comenzar el rodaje del video cinematográfico.",duration:"1 hora",note:"Objetivo: terminar aproximadamente a las 14:00."},
+    {time:"14:00",title:"Inserts en vertical",desc:"Grabar inserts en formato vertical para los reels.",duration:"En paralelo",note:"Se pueden grabar al mismo tiempo que VIDEO 1 si la producción lo permite."},
+    {time:"14:30",title:"Fran hablando a cámara",desc:"Grabar a Fran hablando: hooks, desarrollos y cierres de los reels.",duration:"A continuación",note:"Tener los textos preparados y registrar cada versión por separado."}
+  ];
+  let content="<div class=\"video-header\"><div class=\"video-kicker\">JORNADA ARIA · 29 OCTUBRE</div><h2>Horarios</h2><p class=\"video-desc\">Cronograma base de la jornada de rodaje.</p></div><div class=\"schedule-list\">";
+  content+=slots.map((s,i)=>"<article class=\"schedule-item\"><div class=\"schedule-time\">"+s.time+"</div><div class=\"schedule-marker\">"+(i+1)+"</div><div class=\"schedule-copy\"><h3>"+s.title+"</h3><p>"+s.desc+"</p><div class=\"schedule-meta\"><span>"+s.duration+"</span></div><small>"+s.note+"</small></div></article>").join("");
+  content+="</div><p class=\"footer-note\">Horarios orientativos; los inserts pueden adelantarse o hacerse en paralelo con VIDEO 1.</p>";
+  $("video-content").innerHTML=content;
+}
+
 function renderNav(){
   const nav=$("video-nav");
-  nav.innerHTML=data.map((v,i)=>{
+  nav.innerHTML=`<button class="nav-item ${activePage==="pending"?"active":""}" data-page="pending"><span class="nav-number">✓</span><span class="nav-copy"><strong>Lo que falta</strong><small>Pendientes por completar</small></span><span class="nav-check">${getPendingCount()}</span></button><button class="nav-item ${activePage==="schedule"?"active":""}" data-page="schedule"><span class="nav-number">◷</span><span class="nav-copy"><strong>Horarios</strong><small>Plan del rodaje</small></span></button>` + data.map((v,i)=>{
     const plans=v.plans||[], done=plans.filter(p=>p.done).length, complete=plans.length>0&&done===plans.length;
-    return `<button class="nav-item ${v.id===activeVideoId?"active":""}" data-video="${esc(v.id)}">
+    return `<button class="nav-item ${activePage==="videos"&&v.id===activeVideoId?"active":""}" data-video="${esc(v.id)}">
       <span class="nav-number">${String(i+1).padStart(2,"0")}</span>
       <span class="nav-copy"><strong>${esc(v.name)}</strong><small>${esc(v.subtitle||"VIDEO")} · ${done}/${plans.length} planos</small></span>
       <span class="nav-check">${complete?"✓":""}</span>
     </button>`;
   }).join("") + `<button id="add-video-nav" class="nav-item"><span class="nav-number">＋</span><span class="nav-copy"><strong>Agregar video</strong><small>Crear otra pestaña</small></span></button>`;
-  nav.querySelectorAll("[data-video]").forEach(b=>b.addEventListener("click",()=>{activeVideoId=b.dataset.video;render();}));
+  nav.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>{activePage=b.dataset.page;render();}));
+  nav.querySelectorAll("[data-video]").forEach(b=>b.addEventListener("click",()=>{activePage="videos";activeVideoId=b.dataset.video;render();}));
   $("add-video-nav").addEventListener("click",()=>openVideoDialog());
 }
 function renderProgress(){
