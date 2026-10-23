@@ -270,26 +270,41 @@ function pendingItemMarkup(item){
   return "<label class=\"pending-item\"><input type=\"checkbox\" data-pending-kind=\""+item.kind+"\" data-pending-id=\""+esc(item.id)+"\"><span class=\"pending-copy\"><strong>"+esc(item.label)+"</strong>"+(item.kind==="plan"?"<small>"+esc(item.detail)+"</small>":"<small>"+esc(item.detail)+"</small>")+"</span></label>";
 }
 function renderAlduPage(){
-  const editItems=[];
-  data.filter(v=>v.id!=="aldu").forEach(v=>{
-    (v.checklist||[]).forEach(c=>{
-      if(/HOOK|CIERRE|CTA|TEXTO/i.test(c.label||"")){
-        const id="edit-"+c.id;
-        editItems.push({id,videoId:v.id,video:v.name,label:c.label,text:c.text,done:!!alduEditState[id]});
-      }
+  const versions=[
+    {id:"cine",group:"VIDEO 1 · CINE",title:"VIDEO 1 · CINE",desc:"Pieza horizontal completa",parts:[]},
+    {id:"reel1-v1",group:"REEL 1",title:"REEL 1 · V1",desc:"Hook 1 + Cierre 1",parts:[["reel1","HOOK 1"],["reel1","CIERRE 1"]]},
+    {id:"reel1-v2",group:"REEL 1",title:"REEL 1 · V2",desc:"Hook 2 + Cierre 2",parts:[["reel1","HOOK 2"],["reel1","CIERRE 2"]]},
+    {id:"reel1-v3",group:"REEL 1",title:"REEL 1 · V3",desc:"Hook 3 + desarrollo específico + Cierre 2",parts:[["reel1","HOOK 3"],["reel1","DESARROLLO 2 (HOOK 3)"],["reel1","CIERRE 2"]]},
+    {id:"reel2-v2",group:"REEL 2",title:"REEL 2 · V2",desc:"Hook 2 + Cierre 1",parts:[["reel2","HOOK 2"],["reel2","CIERRE 1"]]},
+    {id:"reel2-v3",group:"REEL 2",title:"REEL 2 · V3",desc:"Hook 3 + Cierre 2",parts:[["reel2","HOOK 3"],["reel2","CIERRE 2"]]},
+    {id:"reel3-v1",group:"REEL 3",title:"REEL 3 · V1",desc:"Hook 1 + Cierre 1",parts:[["reel3","HOOK 1"],["reel3","CIERRE 1"]]},
+    {id:"reel3-v2",group:"REEL 3",title:"REEL 3 · V2",desc:"Hook 2 + Cierre 2",parts:[["reel3","HOOK 2"],["reel3","CIERRE 2"]]},
+    {id:"reel3-v3",group:"REEL 3",title:"REEL 3 · V3",desc:"Hook 3 + desarrollo + Cierre 3",parts:[["reel3","HOOK 3"],["reel3","DESARROLLO"],["reel3","CIERRE 3"]]},
+    {id:"reel4-v1",group:"REEL 4",title:"REEL 4 · V1",desc:"Hook 1 + texto / desarrollo",parts:[["reel4","HOOK 1"],["reel4","TEXTO / DESARROLLO"]]},
+    {id:"reel4-v2",group:"REEL 4",title:"REEL 4 · V2",desc:"Hook 2 + texto / desarrollo",parts:[["reel4","HOOK 2"],["reel4","TEXTO / DESARROLLO"]]},
+    {id:"reel4-v3",group:"REEL 4",title:"REEL 4 · V3",desc:"Hook 3 + texto / desarrollo",parts:[["reel4","HOOK 3"],["reel4","TEXTO / DESARROLLO"]]}
+  ];
+  const findPart=(videoId,label)=>{
+    const v=data.find(x=>x.id===videoId);
+    return (v?.checklist||[]).find(c=>(c.label||"").toUpperCase()===label.toUpperCase());
+  };
+  const done=versions.filter(v=>alduEditState[v.id]).length;
+  let content='<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · USO PERSONAL</div><h2>Mi edición</h2><p class="video-desc">Versiones finales desglosadas para editar. Estos checks son independientes del rodaje y de los checklists del equipo.</p><div class="video-meta"><span class="meta-chip">'+done+'/'+versions.length+' versiones listas</span><span class="meta-chip">'+(versions.length-done)+' pendientes</span></div></div>';
+  ["VIDEO 1 · CINE","REEL 1","REEL 2","REEL 3","REEL 4"].forEach(group=>{
+    const items=versions.filter(v=>v.group===group);
+    content+='<section class="aldu-section"><div class="checklist-heading"><h3>'+esc(group)+'</h3><span>'+items.filter(v=>alduEditState[v.id]).length+'/'+items.length+' listas</span></div><div class="content-checklist">';
+    items.forEach(v=>{
+      content+='<article class="aldu-version '+(alduEditState[v.id]?"checked":"")+'"><label class="aldu-version-check"><input type="checkbox" data-aldu-item="'+v.id+'" '+(alduEditState[v.id]?"checked":"")+'><span><strong>'+esc(v.title)+'</strong><small>'+esc(v.desc)+'</small></span></label><div class="aldu-parts">';
+      if(!v.parts.length)content+='<div class="aldu-part"><span>Pieza cinematográfica horizontal · montaje de los planos seleccionados de VIDEO 1.</span></div>';
+      v.parts.forEach(part=>{
+        const source=findPart(part[0],part[1]);
+        content+='<div class="aldu-part"><strong>'+esc(part[1])+'</strong><span>'+esc(source?.text||"Texto no cargado en el guion actual.")+'</span></div>';
+      });
+      content+='</div></article>';
     });
+    content+='</div></section>';
   });
-  const done=editItems.filter(x=>x.done).length;
-  let content=`<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · USO PERSONAL</div><h2>Mi edición</h2><p class="video-desc">Checklist personal de Aldu para organizar la postproducción. Estos checks son independientes del rodaje y de los checklist de los reels.</p><div class="video-meta"><span class="meta-chip">${done}/${editItems.length} versiones listas</span><span class="meta-chip">${editItems.length-done} pendientes</span></div></div>`;
-  data.filter(v=>v.id!=="aldu").forEach(v=>{
-    const items=editItems.filter(x=>x.videoId===v.id);
-    if(!items.length)return;
-    content+=`<section class="aldu-section"><div class="checklist-heading"><h3>${esc(v.name)}</h3><span>${items.filter(x=>x.done).length}/${items.length} listos</span></div><div class="content-checklist">`;
-    content+=items.map(item=>`<label class="content-item ${item.done?"checked":""}"><input type="checkbox" data-aldu-item="${esc(item.id)}" ${item.done?"checked":""}><span class="content-item-copy"><strong>${esc(v.name)} · ${esc(item.label)}</strong><span>${esc(item.text)}</span></span></label>`).join("");
-    content+=`</div></section>`;
-  });
-  if(!editItems.length)content+=`<div class="empty-state"><strong>No hay versiones todavía</strong><p>Agregá hooks o cierres en las pestañas de los reels y van a aparecer acá.</p></div>`;
-  content+=`<p class="footer-note">Este checklist es solo para tu postproducción y no modifica el estado de grabación de los otros videos.</p>`;
+  content+='<p class="footer-note">Checklist personal de postproducción. Las marcas se guardan por separado en este navegador y no modifican los estados del rodaje.</p>';
   $("video-content").innerHTML=content;
   document.querySelectorAll("[data-aldu-item]").forEach(input=>input.addEventListener("change",()=>{
     alduEditState[input.dataset.alduItem]=input.checked;
