@@ -43,3 +43,20 @@
 .overview-reels article small{font-size:11px;line-height:1.5;color:var(--muted)}
 .overview-final{background:#f0f4ef;border-color:#dce6d9}
 @media(max-width:600px){.overview-section{grid-template-columns:34px minmax(0,1fr);gap:10px;padding:18px 15px}.overview-number{font-size:22px}.overview-copy h3{font-size:21px}.overview-reels{grid-template-columns:1fr}}
+
+/* Jornada overview tab */
+.intro-header{margin-bottom:14px}
+.intro-section{display:grid;grid-template-columns:48px minmax(0,1fr);gap:17px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:22px 24px;margin-bottom:12px}
+.intro-number{font-family:Georgia,serif;font-size:27px;color:#a0ada0}
+.intro-label{font-size:9px;letter-spacing:.16em;color:var(--accent);font-weight:750}
+.intro-section h3,.intro-total h3{font-family:Georgia,serif;font-weight:400;font-size:24px;line-height:1.2;letter-spacing:-.025em;margin:6px 0 10px}
+.intro-section p,.intro-total p{margin:0;color:#59635b;font-size:13px;line-height:1.75}
+.intro-list{padding-left:18px;margin:14px 0 0;display:grid;gap:8px;color:#59635b;font-size:12px;line-height:1.6}
+.intro-list strong{color:var(--ink)}
+.intro-total{display:flex;justify-content:space-between;align-items:center;gap:20px;background:var(--accent-soft);border:1px solid #d6e0d4;border-radius:13px;padding:23px 25px;margin-top:14px}
+.intro-total h3{font-size:27px;margin-bottom:5px}
+.intro-total small{display:block;color:#647064;font-size:11px;line-height:1.6;margin-top:10px;max-width:540px}
+.intro-total-count{width:100px;height:100px;border-radius:50%;border:1px solid #bdcdbb;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.intro-total-count strong{font-family:Georgia,serif;font-size:40px;font-weight:400;line-height:1}
+.intro-total-count span{font-size:8px;letter-spacing:.12em;font-weight:750;margin-top:5px}
+@media(max-width:520px){.intro-section{grid-template-columns:30px minmax(0,1fr);gap:10px;padding:17px}.intro-section h3{font-size:21px}.intro-total{padding:18px;align-items:flex-start}.intro-total-count{width:70px;height:70px}.intro-total-count strong{font-size:30px}.intro-total-count span{font-size:7px}.intro-total h3{font-size:22px}}
