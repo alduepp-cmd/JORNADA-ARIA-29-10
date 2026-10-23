@@ -147,7 +147,7 @@ function allPlans(){ return data.flatMap(v=>v.plans||[]); }
 function render(){
   if(!data.length){data=clone(seedData);activeVideoId=data[0].id;}
   if(!data.some(v=>v.id===activeVideoId)) activeVideoId=data[0].id;
-  renderNav(); if(activePage==="overview")renderOverviewPage();else if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else renderContent(); renderProgress();
+  renderNav(); if(activePage==="overview")renderOverviewPage();else if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else if(activePage==="aldu")renderAlduPage();else renderContent(); renderProgress();
 }
 function renderIntroPage(){
   const content=`
@@ -267,6 +267,32 @@ function renderPendingPage(){
 function pendingItemMarkup(item){
   return "<label class=\"pending-item\"><input type=\"checkbox\" data-pending-kind=\""+item.kind+"\" data-pending-id=\""+esc(item.id)+"\"><span class=\"pending-copy\"><strong>"+esc(item.label)+"</strong>"+(item.kind==="plan"?"<small>"+esc(item.detail)+"</small>":"<small>"+esc(item.detail)+"</small>")+"</span></label>";
 }
+function renderAlduPage(){
+  const editItems=[];
+  data.forEach(v=>{
+    (v.checklist||[]).forEach(c=>{
+      if(/HOOK|CIERRE|CTA/i.test(c.label||"")){
+        editItems.push({id:c.id,video:v.name,label:c.label,text:c.text,done:!!c.done});
+      }
+    });
+  });
+  const done=editItems.filter(x=>x.done).length;
+  let content=`<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · ALDU</div><h2>Mi edición</h2><p class="video-desc">Tu checklist para ir marcando las versiones que ya editaste o dejaste listas. Al tildar una opción, también se actualiza en el guion del reel correspondiente.</p><div class="video-meta"><span class="meta-chip">${done}/${editItems.length} versiones listas</span><span class="meta-chip">${editItems.length-done} pendientes</span></div></div>`;
+  data.forEach(v=>{
+    const items=editItems.filter(x=>x.video===v.name);
+    if(!items.length)return;
+    content+=`<section class="aldu-section"><div class="checklist-heading"><h3>${esc(v.name)}</h3><span>${items.filter(x=>x.done).length}/${items.length} listos</span></div><div class="content-checklist">`;
+    content+=items.map(item=>`<label class="content-item ${item.done?"checked":""}"><input type="checkbox" data-aldu-item="${esc(item.id)}" ${item.done?"checked":""}><span class="content-item-copy"><strong>${esc(v.name)} · ${esc(item.label)}</strong><span>${esc(item.text)}</span></span></label>`).join("");
+    content+=`</div></section>`;
+  });
+  if(!editItems.length)content+=`<div class="empty-state"><strong>No hay versiones todavía</strong><p>Agregá hooks o cierres en las pestañas de los reels y van a aparecer acá.</p></div>`;
+  content+=`<p class="footer-note">Los checks se sincronizan con el checklist de cada reel.</p>`;
+  $("video-content").innerHTML=content;
+  document.querySelectorAll("[data-aldu-item]").forEach(input=>input.addEventListener("change",()=>{
+    data.forEach(v=>(v.checklist||[]).forEach(c=>{if(c.id===input.dataset.alduItem)c.done=input.checked;}));
+    saveData();
+  }));
+}
 function renderSchedulePage(){
   const slots=[
     {time:"13:00",title:"Arranque · VIDEO 1 — CINE",desc:"Comenzar el rodaje del video cinematográfico.",duration:"1 hora",note:"Objetivo: terminar aproximadamente a las 14:00."},
@@ -281,7 +307,7 @@ function renderSchedulePage(){
 
 function renderNav(){
   const nav=$("video-nav");
-  nav.innerHTML=`<button class="nav-item ${activePage==="overview"?"active":""}" data-page="overview"><span class="nav-number">A</span><span class="nav-copy"><strong>Idea de la jornada</strong><small>Objetivo y contenido</small></span></button><button class="nav-item ${activePage==="pending"?"active":""}" data-page="pending"><span class="nav-number">✓</span><span class="nav-copy"><strong>Lo que falta</strong><small>Pendientes por completar</small></span><span class="nav-check">${getPendingCount()}</span></button><button class="nav-item ${activePage==="schedule"?"active":""}" data-page="schedule"><span class="nav-number">◷</span><span class="nav-copy"><strong>Horarios</strong><small>Plan del rodaje</small></span></button>` + data.map((v,i)=>{
+  nav.innerHTML=`<button class="nav-item ${activePage==="overview"?"active":""}" data-page="overview"><span class="nav-number">A</span><span class="nav-copy"><strong>Idea de la jornada</strong><small>Objetivo y contenido</small></span></button><button class="nav-item ${activePage==="aldu"?"active":""}" data-page="aldu"><span class="nav-number">✂</span><span class="nav-copy"><strong>Aldu · Mi edición</strong><small>Versiones por editar</small></span></button><button class="nav-item ${activePage==="pending"?"active":""}" data-page="pending"><span class="nav-number">✓</span><span class="nav-copy"><strong>Lo que falta</strong><small>Pendientes por completar</small></span><span class="nav-check">${getPendingCount()}</span></button><button class="nav-item ${activePage==="schedule"?"active":""}" data-page="schedule"><span class="nav-number">◷</span><span class="nav-copy"><strong>Horarios</strong><small>Plan del rodaje</small></span></button>` + data.map((v,i)=>{
     const plans=v.plans||[], done=plans.filter(p=>p.done).length, complete=plans.length>0&&done===plans.length;
     return `<button class="nav-item ${activePage==="videos"&&v.id===activeVideoId?"active":""}" data-video="${esc(v.id)}">
       <span class="nav-number">${String(i+1).padStart(2,"0")}</span>
