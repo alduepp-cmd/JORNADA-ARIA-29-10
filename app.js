@@ -271,25 +271,30 @@ function renderAlduPage(){
   const editItems=[];
   data.forEach(v=>{
     (v.checklist||[]).forEach(c=>{
-      if(/HOOK|CIERRE|CTA/i.test(c.label||"")){
-        editItems.push({id:c.id,video:v.name,label:c.label,text:c.text,done:!!c.done});
+      if(/HOOK|CIERRE|CTA|TEXTO/i.test(c.label||"")){
+        editItems.push({id:"edit-"+c.id,videoId:v.id,video:v.name,label:c.label,text:c.text,done:!!(data.find(x=>x.id==="aldu")?.checklist||[]).find(x=>x.id==="edit-"+c.id)?.done});
       }
     });
   });
   const done=editItems.filter(x=>x.done).length;
-  let content=`<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · ALDU</div><h2>Mi edición</h2><p class="video-desc">Tu checklist para ir marcando las versiones que ya editaste o dejaste listas. Al tildar una opción, también se actualiza en el guion del reel correspondiente.</p><div class="video-meta"><span class="meta-chip">${done}/${editItems.length} versiones listas</span><span class="meta-chip">${editItems.length-done} pendientes</span></div></div>`;
+  let content=`<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · USO PERSONAL</div><h2>Mi edición</h2><p class="video-desc">Checklist personal de Aldu para organizar la postproducción. Estos checks son independientes del rodaje y de los checklist de los reels.</p><div class="video-meta"><span class="meta-chip">${done}/${editItems.length} versiones listas</span><span class="meta-chip">${editItems.length-done} pendientes</span></div></div>`;
   data.forEach(v=>{
-    const items=editItems.filter(x=>x.video===v.name);
+    const items=editItems.filter(x=>x.videoId===v.id);
     if(!items.length)return;
     content+=`<section class="aldu-section"><div class="checklist-heading"><h3>${esc(v.name)}</h3><span>${items.filter(x=>x.done).length}/${items.length} listos</span></div><div class="content-checklist">`;
     content+=items.map(item=>`<label class="content-item ${item.done?"checked":""}"><input type="checkbox" data-aldu-item="${esc(item.id)}" ${item.done?"checked":""}><span class="content-item-copy"><strong>${esc(v.name)} · ${esc(item.label)}</strong><span>${esc(item.text)}</span></span></label>`).join("");
     content+=`</div></section>`;
   });
   if(!editItems.length)content+=`<div class="empty-state"><strong>No hay versiones todavía</strong><p>Agregá hooks o cierres en las pestañas de los reels y van a aparecer acá.</p></div>`;
-  content+=`<p class="footer-note">Los checks se sincronizan con el checklist de cada reel.</p>`;
+  content+=`<p class="footer-note">Este checklist es solo para tu postproducción y no modifica el estado de grabación de los otros videos.</p>`;
   $("video-content").innerHTML=content;
   document.querySelectorAll("[data-aldu-item]").forEach(input=>input.addEventListener("change",()=>{
-    data.forEach(v=>(v.checklist||[]).forEach(c=>{if(c.id===input.dataset.alduItem)c.done=input.checked;}));
+    const id=input.dataset.alduItem;
+    let aldu=data.find(v=>v.id==="aldu");
+    if(!aldu){aldu={id:"aldu",name:"ALDU · MI EDICIÓN",subtitle:"POSTPRODUCCIÓN",description:"Checklist personal de edición.",plans:[],checklist:[]};data.push(aldu);}
+    let task=aldu.checklist.find(x=>x.id===id);
+    if(!task){const sourceId=id.replace(/^edit-/,"");let source=null;for(const v of data){source=(v.checklist||[]).find(c=>c.id===sourceId);if(source)break;}task={id,label:source?.label||"Versión",text:source?.text||"",done:false};aldu.checklist.push(task);}
+    task.done=input.checked;
     saveData();
   }));
 }
