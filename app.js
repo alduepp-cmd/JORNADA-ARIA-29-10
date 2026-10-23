@@ -4,6 +4,8 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__-LF5x0tfCChEYmcSAXpGQ_fUUo78M7
 let supabaseClient = null;
 let remoteReady = false;
 let remoteSyncBusy = false;
+const ALDU_STORAGE_KEY = "jornada-aria-aldu-edit-v1";
+let alduEditState = JSON.parse(localStorage.getItem(ALDU_STORAGE_KEY) || "{}");
 const seedData = [
   {id:"cine", name:"VIDEO 1", subtitle:"CINE", description:"Pieza cinematográfica. Construir una narrativa entre la obra real, el protagonista y el futuro edificio.", plans:[
     {id:"c1",category:"PLANOS DE OBREROS",name:"Pasos de un obrero",type:"Plano detalle",subject:"Obrero",description:"Registrar los pasos sobre el hormigón y la textura del piso.",location:"Interior de obra",duration:"5–8 segundos",notes:"Grabar una toma fija y otra acompañando el movimiento."},
@@ -269,16 +271,17 @@ function pendingItemMarkup(item){
 }
 function renderAlduPage(){
   const editItems=[];
-  data.forEach(v=>{
+  data.filter(v=>v.id!=="aldu").forEach(v=>{
     (v.checklist||[]).forEach(c=>{
       if(/HOOK|CIERRE|CTA|TEXTO/i.test(c.label||"")){
-        editItems.push({id:"edit-"+c.id,videoId:v.id,video:v.name,label:c.label,text:c.text,done:!!(data.find(x=>x.id==="aldu")?.checklist||[]).find(x=>x.id==="edit-"+c.id)?.done});
+        const id="edit-"+c.id;
+        editItems.push({id,videoId:v.id,video:v.name,label:c.label,text:c.text,done:!!alduEditState[id]});
       }
     });
   });
   const done=editItems.filter(x=>x.done).length;
   let content=`<div class="video-header"><div class="video-kicker">POSTPRODUCCIÓN · USO PERSONAL</div><h2>Mi edición</h2><p class="video-desc">Checklist personal de Aldu para organizar la postproducción. Estos checks son independientes del rodaje y de los checklist de los reels.</p><div class="video-meta"><span class="meta-chip">${done}/${editItems.length} versiones listas</span><span class="meta-chip">${editItems.length-done} pendientes</span></div></div>`;
-  data.forEach(v=>{
+  data.filter(v=>v.id!=="aldu").forEach(v=>{
     const items=editItems.filter(x=>x.videoId===v.id);
     if(!items.length)return;
     content+=`<section class="aldu-section"><div class="checklist-heading"><h3>${esc(v.name)}</h3><span>${items.filter(x=>x.done).length}/${items.length} listos</span></div><div class="content-checklist">`;
@@ -289,13 +292,9 @@ function renderAlduPage(){
   content+=`<p class="footer-note">Este checklist es solo para tu postproducción y no modifica el estado de grabación de los otros videos.</p>`;
   $("video-content").innerHTML=content;
   document.querySelectorAll("[data-aldu-item]").forEach(input=>input.addEventListener("change",()=>{
-    const id=input.dataset.alduItem;
-    let aldu=data.find(v=>v.id==="aldu");
-    if(!aldu){aldu={id:"aldu",name:"ALDU · MI EDICIÓN",subtitle:"POSTPRODUCCIÓN",description:"Checklist personal de edición.",plans:[],checklist:[]};data.push(aldu);}
-    let task=aldu.checklist.find(x=>x.id===id);
-    if(!task){const sourceId=id.replace(/^edit-/,"");let source=null;for(const v of data){source=(v.checklist||[]).find(c=>c.id===sourceId);if(source)break;}task={id,label:source?.label||"Versión",text:source?.text||"",done:false};aldu.checklist.push(task);}
-    task.done=input.checked;
-    saveData();
+    alduEditState[input.dataset.alduItem]=input.checked;
+    localStorage.setItem(ALDU_STORAGE_KEY,JSON.stringify(alduEditState));
+    renderAlduPage();
   }));
 }
 function renderSchedulePage(){
