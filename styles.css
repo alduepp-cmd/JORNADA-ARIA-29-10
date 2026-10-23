@@ -60,3 +60,7 @@
 .intro-total-count strong{font-family:Georgia,serif;font-size:40px;font-weight:400;line-height:1}
 .intro-total-count span{font-size:8px;letter-spacing:.12em;font-weight:750;margin-top:5px}
 @media(max-width:520px){.intro-section{grid-template-columns:30px minmax(0,1fr);gap:10px;padding:17px}.intro-section h3{font-size:21px}.intro-total{padding:18px;align-items:flex-start}.intro-total-count{width:70px;height:70px}.intro-total-count strong{font-size:30px}.intro-total-count span{font-size:7px}.intro-total h3{font-size:22px}}
+
+
+/* Aldu editing checklist */
+.aldu-section{background:#fff;border:1px solid var(--line);border-radius:13px;padding:20px;margin:0 0 13px}.aldu-section .checklist-heading{margin-bottom:15px}.aldu-section .content-checklist{gap:8px}.aldu-section .content-item{padding:13px 14px}
