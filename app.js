@@ -83,6 +83,30 @@ function render(){
   if(!data.some(v=>v.id===activeVideoId)) activeVideoId=data[0].id;
   renderNav(); if(activePage==="overview")renderOverviewPage();else if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else renderContent(); renderProgress();
 }
+function renderIntroPage(){
+  const content=`
+    <div class="video-header intro-header">
+      <div class="video-kicker">JORNADA ARIA · 29 OCTUBRE · SAAVEDRA</div>
+      <h2>La idea de la jornada</h2>
+      <p class="video-desc">Una jornada de producción para generar contenido audiovisual de ARIA, combinando una pieza cinematográfica que muestre la obra y su identidad con reels pensados para comunicar el proyecto desde distintos ángulos.</p>
+    </div>
+    <section class="intro-section">
+      <div class="intro-number">01</div>
+      <div><span class="intro-label">PIEZA PRINCIPAL</span><h3>Un video horizontal, estilo cine</h3><p>Una pieza audiovisual más sensorial y cinematográfica. Vamos a combinar planos de los obreros trabajando, detalles de la obra, Fran recorriendo el espacio y escenas del barrio de Saavedra. La idea es transmitir la materialidad, la escala y la transformación de ARIA, mostrando la obra real y anticipando lo que va a ser.</p></div>
+    </section>
+    <section class="intro-section">
+      <div class="intro-number">02</div>
+      <div><span class="intro-label">CONTENIDO PARA REDES</span><h3>Cuatro reels con distintas versiones</h3><p>Además, vamos a grabar cuatro reels verticales. Para algunos vamos a registrar diferentes hooks de entrada y cierres/CTAs, así después podemos probar distintas combinaciones en edición y elegir las versiones que mejor funcionen.</p>
+      <ul class="intro-list"><li><strong>Reel 1:</strong> oportunidad de inversión y etapa de obra.</li><li><strong>Reel 2:</strong> Saavedra, estilo de vida y propuesta de ARIA.</li><li><strong>Reel 3:</strong> comprar durante la construcción y oportunidad de ingreso.</li><li><strong>Reel 4:</strong> recorrido POV por la obra, con textos agregados en edición.</li></ul></div>
+    </section>
+    <section class="intro-total">
+      <div><span class="intro-label">ENTREGABLES BASE</span><h3>5 piezas principales</h3><p>1 video horizontal cinematográfico + 4 reels verticales.</p><small>Las variaciones de hooks y CTAs permiten armar versiones adicionales de los reels. La cantidad final de cortes dependerá de las combinaciones que se seleccionen en edición.</small></div>
+      <div class="intro-total-count"><strong>5</strong><span>PIEZAS BASE</span></div>
+    </section>
+    <p class="footer-note">Esta web reúne el desglose de planos, las versiones de guion, los pendientes y el cronograma para seguir el rodaje en un solo lugar.</p>
+  `;
+  $("video-content").innerHTML=content;
+}
 function getPendingItems(){
   const items=[];
   data.forEach(v=>{
