@@ -39,7 +39,7 @@ const seedData = [
 let data = loadData();
 let activeVideoId = data[0]?.id;
 let activeCineCategory = "PLANOS DE OBREROS";
-let activePage = "videos";
+let activePage = "overview";
 let toastTimer;
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -81,7 +81,7 @@ function allPlans(){ return data.flatMap(v=>v.plans||[]); }
 function render(){
   if(!data.length){data=clone(seedData);activeVideoId=data[0].id;}
   if(!data.some(v=>v.id===activeVideoId)) activeVideoId=data[0].id;
-  renderNav(); if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else renderContent(); renderProgress();
+  renderNav(); if(activePage==="overview")renderOverviewPage();else if(activePage==="pending")renderPendingPage();else if(activePage==="schedule")renderSchedulePage();else renderContent(); renderProgress();
 }
 function getPendingItems(){
   const items=[];
@@ -92,6 +92,47 @@ function getPendingItems(){
   return items;
 }
 function getPendingCount(){return getPendingItems().length;}
+function renderOverviewPage(){
+  const content=`
+    <div class="video-header overview-hero">
+      <div class="video-kicker">JORNADA ARIA · 29 OCTUBRE</div>
+      <h2>La idea de la jornada</h2>
+      <p class="video-desc">Una jornada de producción para generar contenido audiovisual de ARIA, combinando una pieza cinematográfica horizontal con cuatro reels verticales pensados para redes.</p>
+    </div>
+    <section class="overview-section">
+      <div class="overview-number">01</div>
+      <div class="overview-copy">
+        <div class="video-kicker">PIEZA PRINCIPAL · HORIZONTAL</div>
+        <h3>Un video tipo cine</h3>
+        <p>Construir una pieza audiovisual más sensorial y cinematográfica que muestre la obra en su estado actual, el trabajo de los obreros, la arquitectura y a Fran recorriendo el espacio. La idea es transmitir la materialidad, la luz, la escala y el proceso de construcción de ARIA.</p>
+        <div class="overview-tags"><span>Formato horizontal</span><span>Estética cinematográfica</span><span>Obra + protagonista + barrio</span></div>
+      </div>
+    </section>
+    <section class="overview-section">
+      <div class="overview-number">02</div>
+      <div class="overview-copy">
+        <div class="video-kicker">CONTENIDO PARA REDES · VERTICAL</div>
+        <h3>Cuatro reels con distintas versiones</h3>
+        <p>Grabar cuatro piezas verticales para redes. En los reels con guion, vamos a registrar distintas versiones de hooks y CTAs para poder probar diferentes formas de abrir y cerrar cada video en edición.</p>
+        <div class="overview-reels">
+          <article><span>REEL 01</span><strong>Oportunidad de inversión</strong><small>Variaciones de hook, desarrollo y cierre.</small></article>
+          <article><span>REEL 02</span><strong>Saavedra y estilo de vida</strong><small>Variaciones de hook y CTA para presentar el barrio y el proyecto.</small></article>
+          <article><span>REEL 03</span><strong>Comprar en construcción</strong><small>Variaciones de hook y CTA alrededor de la oportunidad de ingresar en esta etapa.</small></article>
+          <article><span>REEL 04</span><strong>POV de la obra</strong><small>Recorrido en vertical desde la mirada de quien entra a conocer ARIA antes de que esté terminado.</small></article>
+        </div>
+      </div>
+    </section>
+    <section class="overview-section overview-final">
+      <div class="overview-number">03</div>
+      <div class="overview-copy">
+        <div class="video-kicker">OBJETIVO DE LA JORNADA</div>
+        <h3>Dejar material para editar y testear</h3>
+        <p>Además de cubrir los planos de la pieza cinematográfica, buscamos llevarnos opciones de apertura y cierre para los reels. Así podemos elegir en edición las combinaciones que mejor funcionen para cada objetivo.</p>
+      </div>
+    </section>
+    <p class="footer-note">Usá las pestañas de la izquierda para consultar el desglose de planos, revisar los guiones, ver los horarios y marcar lo que ya se grabó.</p>`;
+  $("video-content").innerHTML=content;
+}
 function renderPendingPage(){
   const pendingPlans=[];
   const pendingChecks=[];
@@ -150,7 +191,7 @@ function renderSchedulePage(){
 
 function renderNav(){
   const nav=$("video-nav");
-  nav.innerHTML=`<button class="nav-item ${activePage==="pending"?"active":""}" data-page="pending"><span class="nav-number">✓</span><span class="nav-copy"><strong>Lo que falta</strong><small>Pendientes por completar</small></span><span class="nav-check">${getPendingCount()}</span></button><button class="nav-item ${activePage==="schedule"?"active":""}" data-page="schedule"><span class="nav-number">◷</span><span class="nav-copy"><strong>Horarios</strong><small>Plan del rodaje</small></span></button>` + data.map((v,i)=>{
+  nav.innerHTML=`<button class="nav-item ${activePage==="overview"?"active":""}" data-page="overview"><span class="nav-number">A</span><span class="nav-copy"><strong>Idea de la jornada</strong><small>Objetivo y contenido</small></span></button><button class="nav-item ${activePage==="pending"?"active":""}" data-page="pending"><span class="nav-number">✓</span><span class="nav-copy"><strong>Lo que falta</strong><small>Pendientes por completar</small></span><span class="nav-check">${getPendingCount()}</span></button><button class="nav-item ${activePage==="schedule"?"active":""}" data-page="schedule"><span class="nav-number">◷</span><span class="nav-copy"><strong>Horarios</strong><small>Plan del rodaje</small></span></button>` + data.map((v,i)=>{
     const plans=v.plans||[], done=plans.filter(p=>p.done).length, complete=plans.length>0&&done===plans.length;
     return `<button class="nav-item ${activePage==="videos"&&v.id===activeVideoId?"active":""}" data-video="${esc(v.id)}">
       <span class="nav-number">${String(i+1).padStart(2,"0")}</span>
