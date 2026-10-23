@@ -57,8 +57,10 @@ function loadData(){
           (defaults.plans||[]).forEach(p=>{if(!known.has(p.id))v.plans.push(clone(p));});
           if(defaults.checklist){
             const existing=v.checklist||[];
-            const ids=new Set(existing.map(x=>x.id));
-            v.checklist=[...existing,...defaults.checklist.filter(x=>!ids.has(x.id)).map(clone)];
+            v.checklist=defaults.checklist.map(def=>{
+              const savedItem=existing.find(x=>x.id===def.id);
+              return savedItem?{...savedItem,label:def.label,text:def.text}:{...clone(def)};
+            });
           }
           return v;
         });
