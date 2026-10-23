@@ -1,4 +1,9 @@
 const STORAGE_KEY = "jornada-aria-v1";
+const SUPABASE_URL = "https://zawzmswxunriuzptggjn.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__-LF5x0tfCChEYmcSAXpGQ_fUUo78M7";
+let supabaseClient = null;
+let remoteReady = false;
+let remoteSyncBusy = false;
 const seedData = [
   {id:"cine", name:"VIDEO 1", subtitle:"CINE", description:"Pieza cinematográfica. Construir una narrativa entre la obra real, el protagonista y el futuro edificio.", plans:[
     {id:"c1",category:"PLANOS DE OBREROS",name:"Pasos de un obrero",type:"Plano detalle",subject:"Obrero",description:"Registrar los pasos sobre el hormigón y la textura del piso.",location:"Interior de obra",duration:"5–8 segundos",notes:"Grabar una toma fija y otra acompañando el movimiento."},
@@ -71,9 +76,70 @@ function loadData(){
   return clone(seedData);
 }
 function saveData(message="Cambios guardados en este dispositivo"){
-  try { localStorage.setItem(STORAGE_KEY,JSON.stringify(data)); $("save-status").textContent=message; }
+  try { localStorage.setItem(STORAGE_KEY,JSON.stringify(data)); $("save-status").textContent=remoteReady?"Cambios sincronizados para el equipo":message; }
   catch(e){ $("save-status").textContent="No se pudo guardar en este navegador"; showToast("No se pudo guardar. Revisá el almacenamiento del navegador."); }
+  if(remoteReady) syncChecklistToRemote();
   render();
+}
+function checklistRows(){
+  return data.flatMap(v=>[
+    ...(v.plans||[]).map(p=>({id:p.id,done:!!p.done,updated_at:new Date().toISOString()})),
+    ...(v.checklist||[]).map(c=>({id:c.id,done:!!c.done,updated_at:new Date().toISOString()}))
+  ]);
+}
+function applyRemoteRows(rows){
+  const states=new Map((rows||[]).map(r=>[r.id,!!r.done]));
+  data.forEach(v=>{
+    (v.plans||[]).forEach(p=>{if(states.has(p.id))p.done=states.get(p.id);});
+    (v.checklist||[]).forEach(c=>{if(states.has(c.id))c.done=states.get(c.id);});
+  });
+}
+async function syncChecklistToRemote(){
+  if(!supabaseClient||!remoteReady||remoteSyncBusy)return;
+  remoteSyncBusy=true;
+  try{
+    const {error}=await supabaseClient.from("jornada_checklist").upsert(checklistRows(),{onConflict:"id"});
+    if(error)throw error;
+    $("save-status").textContent="Cambios sincronizados para el equipo";
+  }catch(e){
+    $("save-status").textContent="Guardado local · falta configurar permisos de sincronización";
+    console.error("Supabase sync error:",e.message||e);
+  }finally{remoteSyncBusy=false;}
+}
+async function initializeSharedChecklist(){
+  if(!window.supabase||!window.supabase.createClient)return;
+  supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+  $("save-status").textContent="Conectando guardado compartido…";
+  try{
+    const {data:remoteRows,error}=await supabaseClient.from("jornada_checklist").select("id,done");
+    if(error)throw error;
+    if(remoteRows&&remoteRows.length){
+      applyRemoteRows(remoteRows);
+    }else{
+      const {error:seedError}=await supabaseClient.from("jornada_checklist").upsert(checklistRows(),{onConflict:"id"});
+      if(seedError)throw seedError;
+    }
+    remoteReady=true;
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    $("save-status").textContent="Checklist compartido activo";
+    render();
+    supabaseClient.channel("jornada-checklist-live")
+      .on("postgres_changes",{event:"*",schema:"public",table:"jornada_checklist"},payload=>{
+        const row=payload.new;
+        if(!row||!row.id)return;
+        data.forEach(v=>{
+          (v.plans||[]).forEach(p=>{if(p.id===row.id)p.done=!!row.done;});
+          (v.checklist||[]).forEach(c=>{if(c.id===row.id)c.done=!!row.done;});
+        });
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+        $("save-status").textContent="Checklist compartido activo";
+        render();
+      }).subscribe();
+  }catch(e){
+    remoteReady=false;
+    $("save-status").textContent="Guardado local · revisar configuración de Supabase";
+    console.error("Supabase initialization error:",e.message||e);
+  }
 }
 function showToast(message){ const el=$("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2300); }
 function activeVideo(){ return data.find(v=>v.id===activeVideoId)||data[0]; }
@@ -333,3 +399,4 @@ $("reset-button").addEventListener("click",()=>{
   }
 });
 render();
+initializeSharedChecklist();
