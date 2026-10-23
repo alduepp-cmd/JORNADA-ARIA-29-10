@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202624">
+  <title>Jornada ARIA · Producción audiovisual</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Jornada ARIA inicio">
+      <span class="brand-mark">A</span>
+      <span><strong>ARIA</strong><small>PRODUCCIÓN AUDIOVISUAL</small></span>
+    </a>
+    <div class="date-pill"><span class="live-dot"></span> 29 OCTUBRE</div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">PLAN DE RODAJE · SAAVEDRA</div>
+      <h1>Jornada <em>ARIA.</em></h1>
+      <p class="hero-copy">Todo lo que necesitamos grabar, en un solo lugar.</p>
+      <div class="progress-panel">
+        <div class="progress-head">
+          <div><span class="micro-label">PROGRESO GENERAL</span><strong id="progress-count">0 de 5 videos completos</strong></div>
+          <span id="progress-percent" class="progress-percent">0%</span>
+        </div>
+        <div class="progress-track"><div id="progress-bar" class="progress-fill"></div></div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="sidebar">
+        <div class="section-label">CONTENIDO DE LA JORNADA</div>
+        <nav id="video-nav" class="video-nav" aria-label="Videos"></nav>
+        <button id="reset-button" class="text-button" type="button">Restablecer datos iniciales</button>
+      </aside>
+
+      <section class="content-panel">
+        <div id="video-content"></div>
+      </section>
+    </section>
+    <footer>
+      <span>JORNADA ARIA · 29.10</span>
+      <span id="save-status">Cambios guardados en este dispositivo</span>
+    </footer>
+  </main>
+
+  <dialog id="plan-dialog" class="plan-dialog">
+    <form id="plan-form" method="dialog">
+      <div class="dialog-top">
+        <div><div class="eyebrow">DESGLOSE DE RODAJE</div><h2 id="dialog-title">Agregar plano</h2></div>
+        <button type="button" id="close-dialog" class="icon-button" aria-label="Cerrar">×</button>
+      </div>
+      <input type="hidden" id="plan-id">
+      <label>Nombre del plano<input id="plan-name" required placeholder="Ej. Fran caminando entre columnas"></label>
+      <div class="form-grid">
+        <label>Tipo de plano
+          <select id="plan-type">
+            <option>Plano detalle</option><option>Primer plano</option><option>Plano medio</option>
+            <option>Plano general</option><option>Plano entero</option><option>Contrapicado</option>
+            <option>Travelling</option><option>Plano fijo</option><option>Otro</option>
+          </select>
+        </label>
+        <label>Persona / elemento<input id="plan-subject" placeholder="Ej. Fran / obrero / edificio"></label>
+      </div>
+      <label>Descripción y acción<textarea id="plan-description" rows="3" placeholder="¿Qué tiene que pasar en el plano?"></textarea></label>
+      <div class="form-grid">
+        <label>Ubicación<input id="plan-location" placeholder="Ej. Interior de obra"></label>
+        <label>Duración sugerida
+          <select id="plan-duration"><option>3–5 segundos</option><option selected>5–8 segundos</option><option>8–12 segundos</option><option>12+ segundos</option></select>
+        </label>
+      </div>
+      <label>Notas de producción<textarea id="plan-notes" rows="2" placeholder="Movimiento de cámara, luz, continuidad, etc."></textarea></label>
+      <div class="dialog-actions">
+        <button type="button" id="cancel-dialog" class="secondary-button">Cancelar</button>
+        <button type="submit" class="primary-button">Guardar plano</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="video-dialog" class="plan-dialog">
+    <form id="video-form" method="dialog">
+      <div class="dialog-top">
+        <div><div class="eyebrow">CONTENIDO DE LA JORNADA</div><h2 id="video-dialog-title">Agregar video</h2></div>
+        <button type="button" id="close-video-dialog" class="icon-button" aria-label="Cerrar">×</button>
+      </div>
+      <input type="hidden" id="video-id">
+      <label>Nombre del video<input id="video-name" required placeholder="Ej. Reel 5"></label>
+      <label>Concepto / objetivo<textarea id="video-description" rows="3" placeholder="Idea principal, hook o intención del video"></textarea></label>
+      <div class="dialog-actions">
+        <button type="button" id="cancel-video-dialog" class="secondary-button">Cancelar</button>
+        <button type="submit" class="primary-button">Guardar video</button>
+      </div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
