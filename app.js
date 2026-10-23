@@ -93,10 +93,37 @@ function getPendingItems(){
 }
 function getPendingCount(){return getPendingItems().length;}
 function renderPendingPage(){
-  const items=getPendingItems();
-  let content="<div class=\"video-header\"><div class=\"video-kicker\">CONTROL DE PRODUCCIÓN</div><h2>Lo que falta clickear</h2><p class=\"video-desc\">Todo lo que todavía está pendiente: planos por grabar y elementos de los reels por completar.</p><div class=\"video-meta\"><span class=\"meta-chip\">"+items.length+" pendientes</span></div></div>";
-  if(items.length){content+="<div class=\"pending-list\">"+items.map(item=>"<label class=\"pending-item\"><input type=\"checkbox\" data-pending-kind=\""+item.kind+"\" data-pending-id=\""+esc(item.id)+"\"><span class=\"pending-copy\"><strong>"+esc(item.label)+"</strong><small>"+esc(item.video)+" · "+esc(item.detail)+"</small></span></label>").join("")+"</div>";}
-  else {content+="<div class=\"empty-state\"><strong>¡Todo listo!</strong><p>No quedan elementos pendientes por marcar.</p></div>";}
+  const pendingPlans=[];
+  const pendingChecks=[];
+  data.forEach(v=>{
+    (v.plans||[]).filter(p=>!p.done).forEach(p=>pendingPlans.push({kind:"plan",id:p.id,video:v.name,videoId:v.id,label:p.name,detail:p.category||p.type||"Plano"}));
+    (v.checklist||[]).filter(c=>!c.done).forEach(c=>pendingChecks.push({kind:"check",id:c.id,video:v.name,videoId:v.id,label:c.label,detail:c.text}));
+  });
+  const total=pendingPlans.length+pendingChecks.length;
+  let content="<div class=\"video-header\"><div class=\"video-kicker\">CONTROL DE PRODUCCIÓN</div><h2>Lo que falta</h2><p class=\"video-desc\">Desglose de todo lo pendiente, organizado como en cada pestaña. Al marcar algo como grabado o listo, desaparece de esta lista.</p><div class=\"video-meta\"><span class=\"meta-chip\">"+total+" pendientes</span><span class=\"meta-chip\">"+pendingPlans.length+" planos</span><span class=\"meta-chip\">"+pendingChecks.length+" items de reels</span></div></div>";
+  data.forEach(v=>{
+    const vp=pendingPlans.filter(p=>p.videoId===v.id);
+    const vc=pendingChecks.filter(c=>c.videoId===v.id);
+    if(!vp.length&&!vc.length)return;
+    content+="<section class=\"pending-video-section\"><div class=\"pending-video-heading\"><h3>"+esc(v.name)+"</h3><span>"+(vp.length+vc.length)+" pendientes</span></div>";
+    if(vp.length){
+      if(v.id==="cine"){
+        const cats=["PLANOS DE OBREROS","PLANOS DE LA OBRA SOLA","PLANOS DE FRAN","PLANOS DE SAAVEDRA"];
+        cats.forEach(cat=>{
+          const group=vp.filter(p=>p.detail===cat);
+          if(!group.length)return;
+          content+="<div class=\"pending-group\"><h4>"+esc(cat)+" <small>"+group.length+"</small></h4><div class=\"pending-list\">"+group.map(item=>pendingItemMarkup(item)).join("")+"</div></div>";
+        });
+        const uncategorized=vp.filter(p=>!cats.includes(p.detail));
+        if(uncategorized.length)content+="<div class=\"pending-group\"><h4>OTROS PLANOS</h4><div class=\"pending-list\">"+uncategorized.map(item=>pendingItemMarkup(item)).join("")+"</div></div>";
+      } else {
+        content+="<div class=\"pending-group\"><h4>PLANOS POR GRABAR <small>"+vp.length+"</small></h4><div class=\"pending-list\">"+vp.map(item=>pendingItemMarkup(item)).join("")+"</div></div>";
+      }
+    }
+    if(vc.length)content+="<div class=\"pending-group\"><h4>GUION Y VERSIONES <small>"+vc.length+"</small></h4><div class=\"pending-list\">"+vc.map(item=>pendingItemMarkup(item)).join("")+"</div></div>";
+    content+="</section>";
+  });
+  if(!total)content+="<div class=\"empty-state\"><strong>¡Todo listo!</strong><p>No quedan planos ni elementos pendientes por marcar.</p></div>";
   content+="<p class=\"footer-note\">Los cambios se guardan automáticamente en este navegador.</p>";
   $("video-content").innerHTML=content;
   document.querySelectorAll("[data-pending-kind]").forEach(input=>input.addEventListener("change",()=>{
@@ -105,6 +132,9 @@ function renderPendingPage(){
     else {data.forEach(v=>(v.checklist||[]).forEach(c=>{if(c.id===id)c.done=input.checked;}));}
     saveData();
   }));
+}
+function pendingItemMarkup(item){
+  return "<label class=\"pending-item\"><input type=\"checkbox\" data-pending-kind=\""+item.kind+"\" data-pending-id=\""+esc(item.id)+"\"><span class=\"pending-copy\"><strong>"+esc(item.label)+"</strong>"+(item.kind==="plan"?"<small>"+esc(item.detail)+"</small>":"<small>"+esc(item.detail)+"</small>")+"</span></label>";
 }
 function renderSchedulePage(){
   const slots=[
